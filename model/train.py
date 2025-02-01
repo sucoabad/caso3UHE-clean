@@ -19,7 +19,7 @@ model.fit(X_train, y_train)
 # Evaluar el modelo
 y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
-print(f"Error cuadrático  medio: {mse}")
+print(f"Error cuadrático medio: {mse}")
 
 # Guardar el modelo entrenado
 with open('model/model.pkl', 'wb') as f:
