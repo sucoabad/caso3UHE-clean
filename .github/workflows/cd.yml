@@ -28,5 +28,5 @@ jobs:
 
       - name: Desplegar en Cloud Run
         run: |
-          gcloud run deploy caso3UHE --image us-central1-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest --platform managed --region us-central1 --allow-unauthenticated
+          gcloud run deploy caso3uhe --image us-central1-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest --platform managed --region us-central1 --allow-unauthenticated
         
