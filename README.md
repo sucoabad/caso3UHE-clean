@@ -1,1 +1,2 @@
 # caso3UHE 
+gcloud iam service-accounts add-iam-policy-binding 867521291114-compute@developer.gserviceaccount.com --member="serviceAccount:github-actions@caso3uhe.iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser" --project=caso3uhe
