@@ -23,10 +23,10 @@ jobs:
 
       - name: Construir y subir imagen Docker a Artifact Registry
         run: |
-          docker build -t us-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3UHE:latest .
-          docker push us-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3UHE:latest
+          docker build -t us-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest .
+          docker push us-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest
 
       - name: Desplegar en Cloud Run
         run: |
-          gcloud run deploy caso3UHE --image us-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3UHE:latest --platform managed --region us-central1 --allow-unauthenticated
+          gcloud run deploy caso3UHE --image us-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest --platform managed --region us-central1 --allow-unauthenticated
         
