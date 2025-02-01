@@ -12,7 +12,7 @@ y = 4 + 3 * X + np.random.randn(100, 1)  # y = 4 + 3X + ruido
 # Dividir los datos en conjunto de entrenamiento y prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Crear y entrenar el modelo de regresión lineal
+# Crear y  entrenar el modelo de regresión lineal
 model = LinearRegression()
 model.fit(X_train, y_train)
 
