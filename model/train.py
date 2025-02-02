@@ -1,21 +1,24 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pickle
 
-# Generar datos de ejemplo (área en m² y precio en miles de dólares)
-np.random.seed(42)
-area = 50 + 200 * np.random.rand(100, 1)  # Áreas entre 50 y 250 m²
-precio = 30 + 3.5 * area + np.random.randn(100, 1) * 10  # Precio = 30 + 3.5 * área + ruido
+# Cargar el dataset
+file_path = 'Housing.csv'
+df = pd.read_csv(file_path)
 
-# Crear un DataFrame para mayor claridad
-df = pd.DataFrame({'Área (m²)': area.flatten(), 'Precio (mil USD)': precio.flatten()})
+# Visualización inicial de los datos
+print(df.head())
+
+# Selección de la variable independiente (área) y la variable dependiente (precio)
+X = df[['area']]
+y = df['price']
 
 # Dividir los datos en conjuntos de entrenamiento y prueba
-X = df[['Área (m²)']]
-y = df['Precio (mil USD)']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Crear y entrenar el modelo de regresión lineal
@@ -27,19 +30,31 @@ y_pred = modelo.predict(X_test)
 
 # Evaluar el modelo
 mse = mean_squared_error(y_test, y_pred)
-print(f"Error cuadrático medio: {mse}")
+r2 = r2_score(y_test, y_pred)
+print(f"Error cuadrático medio (MSE): {mse}")
+print(f"Coeficiente de determinación (R^2): {r2}")
 
 # Visualización de los resultados
-plt.scatter(X_test, y_test, color='blue', label='Datos reales')
-plt.plot(X_test, y_pred, color='red', linewidth=2, label='Predicción del modelo')
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x=X_test['area'], y=y_test, color='blue', label='Datos reales')
+sns.lineplot(x=X_test['area'], y=y_pred, color='red', label='Predicción del modelo')
 plt.xlabel('Área (m²)')
-plt.ylabel('Precio (mil USD)')
+plt.ylabel('Precio (USD)')
 plt.title('Regresión Lineal: Precio vs Área')
 plt.legend()
+plt.grid(True)
+plt.show()
+
+# Visualización de la distribución de errores
+plt.figure(figsize=(10, 6))
+sns.histplot(y_test - y_pred, kde=True, color='purple')
+plt.title('Distribución de Errores (Residuals)')
+plt.xlabel('Error de Predicción')
+plt.ylabel('Frecuencia')
+plt.grid(True)
 plt.show()
 
 # Guardar el modelo entrenado
-import pickle
 with open('model.pkl', 'wb') as f:
     pickle.dump(modelo, f)
 
