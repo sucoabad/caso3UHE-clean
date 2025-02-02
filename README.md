@@ -1,104 +1,215 @@
-Proyecto de Predicción de Precios de Casas
+# 🏡 Predicción de Precios de Casas
 
-Este proyecto implementa un modelo de regresión lineal en Python utilizando la biblioteca scikit-learn. El objetivo del modelo es predecir el precio de una casa basado únicamente en su área en metros cuadrados. El modelo está expuesto mediante una API construida con Flask y desplegado en Google Cloud Run utilizando un flujo de integración continua (CI/CD) con GitHub Actions.
+Este proyecto implementa un modelo de **Regresión Lineal** utilizando **Python** y la biblioteca **scikit-learn** para predecir el precio de una casa basado en su área y otras características relevantes. 🚀
 
-Características
+---
 
-Modelo de Regresión Lineal para la predicción de precios de casas.
+## 📦 Integrantes
 
-API REST para realizar predicciones de forma remota.
+Daniel Ortega
+Hernán Abad
+Rubén Tocain
+Danny Diaz
+Edwin Simbaña
 
-Despliegue Automatizado con GitHub Actions y Google Cloud Run.
+---
 
-Docker para la contenerización de la aplicación.
+## 📦 Estructura del Proyecto
 
-Estructura del Proyecto
-
+```
 caso3UHE-clean/
-├── app/
-│   └── app.py               # API REST en Flask
 ├── model/
-│   └── model.pkl            # Modelo de regresión lineal entrenado
-├── requirements.txt         # Dependencias del proyecto
-├── Dockerfile               # Archivo de configuración de Docker
-├── .github/workflows/
-│   └── ci-cd.yml            # Configuración de GitHub Actions para CI/CD
-└── README.md                # Documentación del proyecto
+│   ├── train.py
+│   └── model.pkl
+├── data/
+│   └── Housing.csv
+├── app.py
+├── requirements.txt
+└── README.md
+```
 
-Instalación Local
+---
 
-Clona el repositorio:
+## ⚙️ Requisitos
 
+Instala las dependencias ejecutando:
+
+```bash
+pip install -r requirements.txt
+```
+
+### `requirements.txt`
+
+```
+flask
+numpy
+scikit-learn
+pickle5
+gunicorn
+pandas
+matplotlib
+seaborn
+```
+
+---
+
+## 🚀 Ejecución del Proyecto
+
+1️⃣ Clona el repositorio:
+
+```bash
 git clone https://github.com/sucoabad/caso3UHE-clean.git
 cd caso3UHE-clean
+```
 
-Crea un entorno virtual e instala las dependencias:
+2️⃣ Ejecuta el script de entrenamiento:
 
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
-pip install -r requirements.txt
+```bash
+python model/train.py
+```
 
-Ejecuta la aplicación localmente:
+3️⃣ Inicia la aplicación web:
 
-python app/app.py
+```bash
+gunicorn app:app --bind 0.0.0.0:8080
+```
 
-Uso de la API
+4️⃣ Accede a la aplicación en `http://localhost:8080`.
 
-Endpoint de Predicción
+---
 
-URL: /predict
+## ☁️ CI/CD con Google Cloud Run
 
-Método: POST
+Este proyecto está configurado para implementarse automáticamente en **Google Cloud Run** utilizando **GitHub Actions**.
 
-Formato de Entrada: JSON
+### 🗂️ Pipeline de CI/CD
 
-Ejemplo de Petición:
+- **Clonación del repositorio**
+- **Autenticación con Google Cloud**
+- **Construcción de la imagen Docker**
+- **Push a Google Artifact Registry**
+- **Despliegue en Cloud Run**
 
-curl -X POST http://localhost:8080/predict -H "Content-Type: application/json" -d '{"area": 120}'
+### 🔑 Configuración de GitHub Actions
 
-Ejemplo de Respuesta:
+```yaml
+name: CI/CD Pipeline
 
-{
-  "predicted_price": 360.75
-}
+on:
+  push:
+    branches:
+      - main
 
-Despliegue en Google Cloud Run
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-El despliegue se realiza automáticamente al hacer push en la rama main del repositorio. El flujo CI/CD está configurado para:
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
 
-Construir la imagen Docker.
+      - name: Autenticación en Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-Subir la imagen al Google Artifact Registry.
+      - name: Configurar Docker para Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-Desplegar la aplicación en Google Cloud Run.
+      - name: Construir y subir la imagen Docker
+        run: |
+          docker build -t us-central1-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest .
+          docker push us-central1-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest
 
-Requisitos del Sistema
+      - name: Desplegar en Cloud Run
+        run: |
+          gcloud run deploy caso3uhe \
+            --image us-central1-docker.pkg.dev/caso3uhe/mi-repo-docker/caso3uhe-clean:latest \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated
+```
 
-Python 3.9 o superior
+---
 
-Docker
+## 📊 Visualización de Resultados
 
-Google Cloud SDK (para despliegues locales)
+### Gráfico de Dispersión (Área vs Precio)
 
-Contribución
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-Haz un fork del repositorio.
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x=df['area'], y=df['price'], color='blue')
+plt.plot(df['area'], modelo.predict(df[['area']]), color='red')
+plt.xlabel('Área (m²)')
+plt.ylabel('Precio (USD)')
+plt.title('Relación entre Área y Precio')
+plt.show()
+```
 
-Crea una nueva rama: git checkout -b feature/nueva-funcionalidad.
+### Ejemplo del Gráfico:
 
-Realiza tus cambios y haz commit: git commit -m 'Agrega nueva funcionalidad'.
+![Evaluación del modelo](image.png)
 
-Haz push a la rama: git push origin feature/nueva-funcionalidad.
+![Visualización de los resultados](image-1.png)
 
-Abre un Pull Request.
+![Visualización de la distribución de errores](image-2.png)
+---
 
-![alt text](image.png)
+## 📈 Ejemplo de Predicción
 
-![alt text](image-1.png)
+```python
+from flask import Flask, request, jsonify
+import pickle
+import numpy as np
 
-![alt text](image-2.png)
+app = Flask(__name__)
 
-Licencia
+# Cargar el modelo entrenado
+with open('model/model.pkl', 'rb') as f:
+    modelo = pickle.load(f)
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más información.
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json()
+    area = np.array([[data['area']]])
+    prediction = modelo.predict(area)
+    return jsonify({'predicted_price': prediction[0]})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+```
+
+---
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! 🚀
+
+1️⃣ Haz un fork del repositorio.  
+2️⃣ Crea una nueva rama (`git checkout -b feature-nueva`).  
+3️⃣ Realiza tus cambios y haz commit (`git commit -m 'Nueva funcionalidad'`).  
+4️⃣ Sube tus cambios (`git push origin feature-nueva`).  
+5️⃣ Abre un **Pull Request**.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia [MIT](LICENSE).
+
+---
+
+## 🙋‍♂️ Contacto
+
+**Autor:** [sucoabad](https://github.com/sucoabad)  
+📧 Correo: sucoabad@hotmail.com  
+🌍 GitHub: [https://github.com/sucoabad/caso3UHE-clean](https://github.com/sucoabad/caso3UHE-clean)
+
+---
+
+¡Gracias por visitar este proyecto! 🚀
+
 
