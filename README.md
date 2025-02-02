@@ -6,11 +6,11 @@ Este proyecto implementa un modelo de **Regresión Lineal** utilizando **Python*
 
 ## 📦 Integrantes
 
-Daniel Ortega
-Hernán Abad
-Rubén Tocain
-Danny Diaz
-Edwin Simbaña
+- Daniel Ortega
+- Hernán Abad
+- Rubén Tocain
+- Danny Diaz
+- Edwin Simbaña
 
 ---
 
