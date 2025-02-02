@@ -8,7 +8,7 @@ import seaborn as sns
 import pickle
 
 # Cargar el dataset
-file_path = 'Housing.csv'
+file_path = 'model/Housing.csv' 
 df = pd.read_csv(file_path)
 
 # Visualización inicial de los datos
